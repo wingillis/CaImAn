@@ -39,7 +39,7 @@ standard_movies = [
 ###############
 # commands
 
-def do_install_to(targdir, inplace=False, force=False):
+def do_install_to(targdir:str, inplace:bool=False, force:bool=False) -> None:
 	global sourcedir_base
 	if os.path.isdir(targdir) and not force:
 		raise Exception(targdir + " already exists")
@@ -61,7 +61,7 @@ def do_install_to(targdir, inplace=False, force=False):
 			shutil.copy(extrafile, targdir)
 	print("Installed " + targdir)
 
-def do_check_install(targdir, inplace=False):
+def do_check_install(targdir:str, inplace:bool=False) -> None:
 	global sourcedir_base
 	if inplace:
 		sourcedir_base = os.getcwd()
@@ -82,8 +82,10 @@ def do_check_install(targdir, inplace=False):
 		ok = False
 	if ok:
 		print("OK")
+	if not ok:
+		raise Exception("Install is dirty")
 
-def do_run_nosetests(targdir):
+def do_run_nosetests(targdir:str) -> None:
 	out, err, ret = runcmd(["nosetests", "--traverse-namespace", "caiman"])
 	if ret != 0:
 		print("Nosetests failed with return code " + str(ret))
@@ -91,7 +93,7 @@ def do_run_nosetests(targdir):
 	else:
 		print("Nosetests success!")
 
-def do_run_demotests(targdir):
+def do_run_demotests(targdir:str) -> None:
 	out, err, ret = runcmd([os.path.join(caiman_datadir(), "test_demos.sh")])
 	if ret != 0:
 		print("Demos failed with return code " + str(ret))
@@ -99,7 +101,7 @@ def do_run_demotests(targdir):
 	else:
 		print("Demos success!")
 
-def do_nt_run_demotests(targdir):
+def do_nt_run_demotests(targdir:str) -> None:
 	# Windows platform can't run shell scripts, and doing it in batch files
 	# is a terrible idea. So we'll do a minimal implementation of run_demos for
 	# windows inline here.
@@ -122,7 +124,7 @@ def do_nt_run_demotests(targdir):
 ###############
 #
 
-def comparitor_all_diff_files(comparitor, path_prepend):
+def comparitor_all_diff_files(comparitor, path_prepend:str):
 	ret = list(map(lambda x: os.path.join(path_prepend, x), comparitor.diff_files)) # Initial
 	for dirname in comparitor.subdirs.keys():
 		to_append = comparitor_all_diff_files(comparitor.subdirs[dirname], os.path.join(path_prepend, dirname))
@@ -130,7 +132,7 @@ def comparitor_all_diff_files(comparitor, path_prepend):
 			ret.append(*to_append)
 	return ret
 
-def comparitor_all_left_only_files(comparitor, path_prepend):
+def comparitor_all_left_only_files(comparitor, path_prepend:str):
 	ret = list(map(lambda x: os.path.join(path_prepend, x), comparitor.left_only)) # Initial
 	for dirname in comparitor.subdirs.keys():
 		to_append = comparitor_all_left_only_files(comparitor.subdirs[dirname], os.path.join(path_prepend, dirname))
@@ -140,7 +142,7 @@ def comparitor_all_left_only_files(comparitor, path_prepend):
 
 ###############
 
-def runcmd(cmdlist, ignore_error=False, verbose=True):
+def runcmd(cmdlist:str, ignore_error:bool=False, verbose:bool=True) -> Tuple[str, str, int]:
 	# In most of my codebases, runcmd saves and returns the output.
 	# Here I've modified it to send right to stdout, because nothing
 	# uses the output and because the demos sometimes have issues
