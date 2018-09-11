@@ -342,7 +342,7 @@ if preprocessing_from_scratch:
             print('No clusters to stop')
 
         c, dview, n_processes = setup_cluster(
-                backend=backend_patch, n_processes=n_processes, single_thread=True)
+                backend=backend_patch, n_processes=n_processes, single_thread=False)
         print('Not RELOADING')
         if not reload:
             # %% RUN ANALYSIS
