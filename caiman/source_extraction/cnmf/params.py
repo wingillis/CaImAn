@@ -12,7 +12,7 @@ class CNMFParams(object):
 
     def __init__(self, fnames=None, dims=None, dxy=(1, 1),
                  border_pix=0, del_duplicates=False, low_rank_background=True,
-                 memory_fact=1, n_processes=1, nb_patch=1, p_ssub=2, p_tsub=2,
+                 memory_fact=1, n_processes=1, nb_patch=1, p_ssub=1, p_tsub=1,
                  remove_very_bad_comps=False, rf=None, stride=None,
                  check_nan=True, n_pixels_per_process=None,
                  k=30, alpha_snmf=10e2, center_psf=False, gSig=[5, 5], gSiz=None,

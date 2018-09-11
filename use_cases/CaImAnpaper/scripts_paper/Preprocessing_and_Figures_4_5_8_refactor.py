@@ -39,7 +39,7 @@ from caiman.source_extraction.cnmf.cnmf import load_CNMF
 # %%  ANALYSIS MODE AND PARAMETERS
 preprocessing_from_scratch = True  # whether to run the full pipeline or just creating figures
 
-if False:
+if preprocessing_from_scratch:
     reload = False
     plot_on = False
     save_on = False  # set to true to recreate
@@ -56,7 +56,7 @@ try:
     print('Processing ID:' + str(ID))
     ID = [np.int(ID)]
 except:
-    ID = np.arange(2,6)
+    ID = np.arange(0,1)
     print('ID NOT PASSED')
 
 
@@ -379,7 +379,7 @@ if preprocessing_from_scratch:
                        'merge_thr': params_movie['merge_thresh'],
                        'p': global_params['p'],
                        'nb': global_params['gnb'],
-                       'only_init_patch': global_params['only_init_patch'],
+                       'only_init': global_params['only_init_patch'],
                        'dview': dview,
                        'method_deconvolution': 'oasis',
                        'border_pix': params_movie['crop_pix'],
@@ -480,17 +480,18 @@ if preprocessing_from_scratch:
                 'size': 20}
         pl.rc('font', **font)
 
-        plot_results = False
-        if plot_results:
-            pl.figure(figsize=(30, 20))
+        plot_results = True
+        # if plot_results:
+            # pl.figure(figsize=(30, 20))
 
         tp_gt, tp_comp, fn_gt, fp_comp, performance_cons_off = compare_components(gt_estimate, cnm2.estimates,
                                                                                   Cn=Cn_orig, thresh_cost=.8,
                                                                                   min_dist=10,
                                                                                   print_assignment=False,
                                                                                   labels=['GT', 'Offline'],
-                                                                                  plot_results=False)
+                                                                                  plot_results=plot_results)
 
+        print(fname_new)
         print({a: b.astype(np.float16) for a, b in performance_cons_off.items()})
         cnm2.estimates.A_thr = scipy.sparse.csc_matrix(cnm2.estimates.A_thr)
         if save_on:

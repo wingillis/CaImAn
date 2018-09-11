@@ -21,6 +21,7 @@ from caiman.utils.utils import apply_magic_wand
 from caiman.base.rois import detect_duplicates_and_subsets
 try:
     cv2.setNumThreads(1)
+
 except:
     print('Open CV is naturally single threaded')
 
@@ -48,7 +49,7 @@ from caiman.cluster import setup_cluster
 preprocessing_from_scratch = True # whether to run the full pipeline or just creating figures
 
 if preprocessing_from_scratch:
-    reload = True
+    reload = False
     plot_on = False
     save_on = False # set to true to recreate
 else:
@@ -313,7 +314,7 @@ if preprocessing_from_scratch:
     num_blocks_per_run=10
     ALL_CCs = []
 
-    for params_movie in np.array(params_movies)[4:5]:
+    for params_movie in np.array(params_movies)[2:3]:
     #    params_movie['gnb'] = 3
         params_display = {
             'downsample_ratio': .2,
@@ -341,7 +342,7 @@ if preprocessing_from_scratch:
             print('No clusters to stop')
 
         c, dview, n_processes = setup_cluster(
-                backend=backend_patch, n_processes=n_processes, single_thread=False)
+                backend=backend_patch, n_processes=n_processes, single_thread=True)
         print('Not RELOADING')
         if not reload:
             # %% RUN ANALYSIS
@@ -388,20 +389,20 @@ if preprocessing_from_scratch:
             # TODO: todocument
             # TODO: warnings 3
             print('Strating CNMF')
-            cnm = cnmf.CNMF(n_processes=n_processes, nb_patch = 1, k=K, gSig=gSig, merge_thresh=params_movie['merge_thresh'], p=global_params['p'],
+            cnm_init = cnmf.CNMF(n_processes=n_processes, nb_patch = 1, k=K, gSig=gSig, merge_thresh=params_movie['merge_thresh'], p=global_params['p'],
                             dview=dview, rf=rf, stride=stride_cnmf, memory_fact=1,
                             method_init=init_method, alpha_snmf=alpha_snmf, only_init_patch=global_params['only_init_patch'],
                             gnb=global_params['gnb'], method_deconvolution='oasis',border_pix =  params_movie['crop_pix'],
-                            low_rank_background = global_params['low_rank_background'], rolling_sum = True, check_nan=check_nan,
-                            block_size=block_size, num_blocks_per_run=num_blocks_per_run)
-            cnm = cnm.fit(images)
+                            low_rank_background = global_params['low_rank_background'], rolling_sum=True, check_nan=check_nan,
+                            block_size=block_size, num_blocks_per_run=num_blocks_per_run, tsub=1, ssub=1)
+            cnm = cnm_init.fit(images)
 
-            A_tot = cnm.estimates.A
-            C_tot = cnm.estimates.C
-            YrA_tot = cnm.estimates.YrA
-            b_tot = cnm.estimates.b
-            f_tot = cnm.estimates.f
-            sn_tot = cnm.estimates.sn
+            A_tot = cnm_init.estimates.A
+            C_tot = cnm_init.estimates.C
+            YrA_tot = cnm_init.estimates.YrA
+            b_tot = cnm_init.estimates.b
+            f_tot = cnm_init.estimates.f
+            sn_tot = cnm_init.estimates.sn
             print(('Number of components:' + str(A_tot.shape[-1])))
             t_patch = time.time() - t1
             try:
@@ -417,7 +418,7 @@ if preprocessing_from_scratch:
 
                 # %% rerun updating the components to refine
             t1 = time.time()
-            cnm = cnmf.CNMF(n_processes=n_processes, k=A_tot.shape, gSig=gSig, merge_thresh=merge_thresh, p=p, dview=dview, Ain=A_tot,
+            cnm = cnmf.CNMF(n_processes=n_processes, k=A_tot.shape[-1], gSig=gSig, merge_thresh=merge_thresh, p=p, dview=dview, Ain=A_tot,
                             Cin=C_tot, b_in = b_tot,
                             f_in=f_tot, rf=None, stride=None, method_deconvolution='oasis',gnb = global_params['gnb'],
                             low_rank_background = global_params['low_rank_background'],

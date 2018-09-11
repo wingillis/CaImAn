@@ -126,12 +126,30 @@ def cnmf_patches(args_in):
 
     if (np.sum(np.abs(np.diff(images.reshape(timesteps, -1).T)))) > 0.1:
 
-        opts = copy(params)
-        opts.set('patch', {'n_processes': 1, 'rf': None, 'stride': None})
-        for group in ('init', 'temporal', 'spatial'):
-            opts.set(group, {'nb': params.get('patch', 'nb_patch')})
-
-        cnm = cnmf.CNMF(n_processes=1, params=opts)
+        cnm = cnmf.CNMF(n_processes=1, k=params.get('init', 'K'), gSig=params.get('init', 'gSig'), gSiz=params.get('init', 'gSiz'),
+                        merge_thresh=params.get('merging', 'merge_thr'), p=0, dview=None, Ain=None, Cin=None,
+                        f_in=None, do_merge=True,
+                        ssub=params.get('init', 'ssub'), tsub=params.get('init', 'tsub'),
+                        p_ssub=params.get('patch', 'ssub'), p_tsub=params.get('patch', 'tsub'),
+                        method_init=params.get('init', 'method_init'), alpha_snmf=params.get('init', 'alpha_snmf'),
+                        rf=None, stride=None, memory_fact=1, gnb=params.get('patch', 'nb_patch'),
+                        only_init_patch=params.get('patch', 'only_init'),
+                        method_deconvolution=params.get('temporal', 'method_deconvolution'),
+                        n_pixels_per_process=params.get('preprocess', 'n_pixels_per_process'),
+                        block_size=params.get('temporal', 'block_size'),
+                        check_nan=params.get('preprocess', 'check_nan'),
+                        skip_refinement=params.get('patch', 'skip_refinement'),
+                        options_local_NMF=params.get('init', 'options_local_NMF'),
+                        normalize_init=params.get('init', 'normalize_init'),
+                        s_min=params.get('temporal', 's_min'),
+                        remove_very_bad_comps=params.get('patch', 'remove_very_bad_comps'),
+                        rolling_sum=params.get('init', 'rolling_sum'),
+                        rolling_length=params.get('init', 'rolling_length'),
+                        min_corr=params.get('init', 'min_corr'), min_pnr=params.get('init', 'min_pnr'),
+                        ring_size_factor=params.get('init', 'ring_size_factor'),
+                        center_psf=params.get('init', 'center_psf'),
+                        ssub_B=params.get('init', 'ssub_B'),
+                        init_iter=params.get('init', 'init_iter'))
 
         cnm = cnm.fit(images)
         return [idx_, shapes, scipy.sparse.coo_matrix(cnm.estimates.A),
@@ -208,7 +226,8 @@ def run_CNMF_patches(file_name, shape, params, gnb=1, dview=None, memory_fact=1,
 
     rf = params.get('patch', 'rf')
     if rf is None:
-        rf = 16
+        # rf = 16
+        raise Exception('You need to set patch rf in order to use patches')
     if np.isscalar(rf):
         rfs = [rf] * len(dims)
     else:
@@ -216,7 +235,8 @@ def run_CNMF_patches(file_name, shape, params, gnb=1, dview=None, memory_fact=1,
 
     stride = params.get('patch', 'stride')
     if stride is None:
-        stride = 4
+        raise Exception('You need to set patch stride in order to use patches')
+        # stride = 4
     if np.isscalar(stride):
         strides = [stride] * len(dims)
     else:
