@@ -688,7 +688,11 @@ class Estimates(object):
                 print(field)
                 if getattr(self, field) is not None:
                     if 'sparse' in str(type(getattr(self, field))):
-                        setattr(self, field, scipy.sparse.hstack([getattr(self, field).tocsc(),getattr(self.discarded_components, field).tocsc()]))
+                        if 'sparse' in str(type(getattr(self.discarded_components, field))):
+                            tmp_ = getattr(self.discarded_components, field).tocsc()
+                        else:
+                            tmp_ = getattr(self.discarded_components, field)
+                        setattr(self, field, scipy.sparse.hstack([getattr(self, field).tocsc(),tmp_]))
                     else:
                         setattr(self, field,np.concatenate([getattr(self, field), getattr(self.discarded_components, field)], axis=0))
 
