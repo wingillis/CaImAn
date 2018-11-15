@@ -25,3 +25,4 @@ dependencies:
 - tifffile
 - tqdm
 - tornado=4.5
+- pyqtgraph=0.10.0
