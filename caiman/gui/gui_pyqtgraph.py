@@ -225,11 +225,11 @@ img.hoverEvent = imageHoverEvent
 def mouseClickEvent(event):
     global x, y, i, j, val
     distances = np.sum(((x,y)-estimates.cms[estimates.idx_components])**2, axis=1)**0.5
-    estimates.components_to_plot = estimates.idx_components[np.argmin(distances)]
+    min_dist_comp = np.argmin(distances)
+    estimates.components_to_plot = estimates.idx_components[min_dist_comp]
     p2.plot(estimates.C[estimates.components_to_plot], clear=True)
-
     p1.setTitle("pos: (%0.1f, %0.1f)  component: %d  value: %g dist:%f" % (x, y, estimates.components_to_plot,
-                                                                           val, distances[estimates.components_to_plot]))
+                                                                           val, distances[min_dist_comp]))
 p1.vb.mouseClickEvent = mouseClickEvent
 
 

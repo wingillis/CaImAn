@@ -59,8 +59,8 @@ except:
     save_results = False
     save_init = False # flag for saving initialization object. Useful if you want to check OnACID with different parameters but same initialization
 
-base_folder = '/mnt/ceph/neuro/DataForPublications/DATA_PAPER_ELIFE/WEBSITE/'
-base_folder_files = '/mnt/ceph/neuro/zebra/05292014Fish1-4/'
+base_folder = '/Users/agiovannucci/Dropbox (Simons Foundation)/Zebra_tmp/'
+base_folder_files = '/Users/agiovannucci/Dropbox (Simons Foundation)/Zebra_tmp'
 #%%
 K = 100 #number of initialization neurons
 min_num_trial = 50 # number of neuron candidates per trial
@@ -104,7 +104,7 @@ initbatch = 200
 expected_comps = 3000
 
 
-show_movie = False
+show_movie = True
 
 params_dict = {    'fnames': fls,
                    'fr': fr,
@@ -127,7 +127,9 @@ params_dict = {    'fnames': fls,
                    'pw_rigid': False,
                    'dist_shape_update': True,
                    'min_num_trial': min_num_trial,
-                   'show_movie': show_movie}
+                   'show_movie': show_movie,
+                   'save_online_movie': True,
+                   'movie_name_online': '/Users/agiovannucci/Dropbox (Simons Foundation)/Zebra_tmp/online_mov.avi'}
 
 opts = cnmf.params.CNMFParams(params_dict=params_dict)
 
@@ -159,7 +161,7 @@ if save_results:
     np.savez(os.path.join(base_folder, 'Zebrafish/results_analysis_online_1EPOCH_gSig6_equalized_Plane_NEW_' + str(ID) + '.npz'),
              Cn=Cn, Ab=cnm.estimates.Ab, Cf=cnm.estimates.C_on, b=cnm.estimates.b, f=cnm.estimates.f,
              dims=cnm.estimates.dims, tottime='SEE VARIABLES t_XX', noisyC=cnm.estimates.noisyC, shifts=cnm.estimates.shifts,
-             num_comps=cnm.estimates.A.shape[-1], t_online=cnm.t_online, t_detect=cnm.t_detect, t_shapes=cnm.t_shapes)
+             num_comps=cnm.estimates.A.shape[-1], t_online=cnm.t_online, t_detect=cnm.t_detect, t_shapes=cnm.t_shapes, t_motion=cnm.t_motion)
     cnm.save(os.path.join(base_folder, 'Zebrafish/results_analysis_online_1EPOCH_gSig6_equalized_Plane_NEW_' + str(ID) + '.hdf5'))
 #%%
 pl.figure()

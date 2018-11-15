@@ -62,7 +62,7 @@ def main():
     pass  # For compatibility between running under Spyder and the CLI
 
 #%% Select file(s) to be processed (download if not present)
-    fnames = ['Sue_2x_3000_40_-46.tif']  # filename to be processed
+    fnames = ['Image4_0629sec.tif']  # filename to be processed
     if fnames[0] in ['Sue_2x_3000_40_-46.tif', 'demoMovie.tif']:
         fnames = [download_demo(fnames[0])]
 
