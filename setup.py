@@ -2,6 +2,7 @@
 
 from setuptools import setup, find_packages
 import os
+import sys
 from os import path
 import numpy as np
 from Cython.Build import cythonize
@@ -41,12 +42,16 @@ for part in extra_dirs:
 
 data_files.append(['bin', binaries])
 ############
+if sys.platform == 'darwin':
+    os.environ['CC'] = 'xcrun clang'
+    os.environ['CXX'] = 'xcrun clang++'
 
 # compile with:     python setup.py build_ext -i
 # clean up with:    python setup.py clean --all
 ext_modules = [Extension("caiman.source_extraction.cnmf.oasis",
                          sources=["caiman/source_extraction/cnmf/oasis.pyx"],
                          include_dirs=[np.get_include()],
+                         extra_compile_args=['-stdlib=libc++'],
                          language="c++")]
 
 setup(
