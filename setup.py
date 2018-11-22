@@ -42,7 +42,7 @@ for part in extra_dirs:
 
 data_files.append(['bin', binaries])
 ############
-if sys.platform == 'darwin':
+if sys.platform == 'darwin' and int(os.uname().release.split('.')[0]) >= 18:
     os.environ['CC'] = 'xcrun clang'
     os.environ['CXX'] = 'xcrun clang++'
 
